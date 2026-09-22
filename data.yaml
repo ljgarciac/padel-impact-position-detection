@@ -1,0 +1,16 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+kpt_shape: [5, 3]
+flip_idx: [0, 1, 2, 3, 4]
+
+nc: 1
+names: ['Person']
+
+roboflow:
+  workspace: padel1s-workspace
+  project: padel_an_2
+  version: 6
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/padel1s-workspace/padel_an_2/dataset/6
