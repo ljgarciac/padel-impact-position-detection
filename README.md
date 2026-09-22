@@ -21,25 +21,25 @@ No es un dataset público preexistente: la anotación de pose es trabajo origina
 este proyecto.
 
 **El dataset vive en `data/Padel_an_2-6/`** (train/valid/test), descargado directamente desde Roboflow
-(`notebooks/01_pipeline_cnn_impacto.ipynb`, Checkpoint 0.5). Un primer export del proyecto tenía un bug
+(`notebooks/actividad_3_clasificacion_visual_cnn.ipynb`, Checkpoint 0.5). Un primer export del proyecto tenía un bug
 de exportación de Roboflow (valores de keypoints desplazados entre ejes para hombro/codo/raqueta,
 confirmado comparando ambos exports y revisando directamente en Roboflow que la anotación manual era
 correcta); reexportando con `download("yolov5")` en vez del formato usado originalmente, el problema
 desaparece por completo (verificado: 0 valores fuera de rango en las 1150×5×2 coordenadas). Por eso ya
 no hay carpetas `train/`, `valid/`, `test/` en la raíz del repo — todo el dataset está en `data/`.
 
-## De pose a clasificación (Actividad 1)
+## De pose a clasificación (Actividad 3)
 
-`notebooks/01_pipeline_cnn_impacto.ipynb` aborda dos tareas:
+`notebooks/actividad_3_clasificacion_visual_cnn.ipynb` aborda dos tareas:
 
 1. **Predicción de los 5 keypoints por jugador** (regresión de coordenadas), comparando tres modelos:
    una CNN propia entrenada desde cero, transfer learning (ResNet18 preentrenado + cabeza de
-   regresión) y el detector YOLO-pose ya entrenado en `notebooks/02_yolo_pose_deteccion.ipynb`. Es la
-   base para trackear los 5 puntos en video (`notebooks/03_demo_inferencia_video.ipynb`).
+   regresión) y el detector YOLO-pose ya entrenado en `notebooks/actividad_3b_yolo_pose_deteccion.ipynb`. Es la
+   base para trackear los 5 puntos en video (`notebooks/actividad_3c_demo_inferencia_video.ipynb`).
 2. **Clasificación del tipo de keypoint** (cabeza/hombro/codo/muñeca/raqueta) a partir de un recorte
    pequeño centrado en cada punto anotado (tamaño proporcional al alto del jugador, ~5500 parches en
    total) — esto produce la salida de clasificación con matriz de confusión y métricas por clase que
-   exige la rúbrica de la Actividad 1, usando la clase real de la anotación directamente (sin ninguna
+   exige la rúbrica de la Actividad 3, usando la clase real de la anotación directamente (sin ninguna
    regla geométrica derivada). Resultado: **81% de exactitud en test** (vs. 21% del baseline
    mayoritario), con confusiones interpretables entre keypoints vecinos (hombro↔codo, por texturas de
    ropa similares; cabeza↔raqueta en algunos casos).
@@ -52,16 +52,16 @@ no hay carpetas `train/`, `valid/`, `test/` en la raíz del repo — todo el dat
 
 El split `train/valid/test` que trae el export de Roboflow mezcla frames del mismo rally entre
 particiones (fuga de información), así que el notebook **reparticiona por rally** con una semilla fija
-(reutilizada también por `notebooks/02_yolo_pose_deteccion.ipynb`, que entrena sobre el split original
+(reutilizada también por `notebooks/actividad_3b_yolo_pose_deteccion.ipynb`, que entrena sobre el split original
 sin reagrupar, por decisión explícita de no reorganizar el dataset).
 
 ## Tracking de jugadores en video
 
-`notebooks/03_demo_inferencia_video.ipynb` y `run_inference_video.py` usan el detector YOLO-pose
-entrenado en `notebooks/02_yolo_pose_deteccion.ipynb` con **tracking de identidad persistente**
+`notebooks/actividad_3c_demo_inferencia_video.ipynb` y `run_inference_video.py` usan el detector YOLO-pose
+entrenado en `notebooks/actividad_3b_yolo_pose_deteccion.ipynb` con **tracking de identidad persistente**
 (ByteTrack, vía `model.track()` de ultralytics) en vez de detección independiente por frame: cada
 jugador mantiene un ID estable mientras el tracker lo siga, con sus 5 keypoints dibujados cuadro a
-cuadro. No forma parte de las métricas exigidas por la Actividad 1.
+cuadro. No forma parte de las métricas exigidas por la Actividad 3.
 
 ## Estructura del repo
 
@@ -70,23 +70,23 @@ data.yaml                            # config YOLO-pose original del proyecto (n
 data/Padel_an_2-6/                   # dataset (train/valid/test), descargado de Roboflow (ver Checkpoint 0.5)
 pyproject.toml, uv.lock, .python-version  # dependencias y version de Python, gestionadas con uv
 notebooks/
-  01_pipeline_cnn_impacto.ipynb      # Actividad 1: descarga el dataset, regresión de 5 keypoints
+  actividad_3_clasificacion_visual_cnn.ipynb      # Actividad 3: descarga el dataset, regresión de 5 keypoints
                                       # (3 modelos comparados) + clasificación del tipo de keypoint (entregable evaluado)
-  02_yolo_pose_deteccion.ipynb       # entrena un detector YOLO-pose (ultralytics) sobre data/Padel_an_2-6
-  03_demo_inferencia_video.ipynb     # demo del framework de tracking sobre un video real
-data/processed/                      # manifest_keypoints.csv, crops_kpts/ y artefactos del notebook 1
+  actividad_3b_yolo_pose_deteccion.ipynb       # entrena un detector YOLO-pose (ultralytics) sobre data/Padel_an_2-6
+  actividad_3c_demo_inferencia_video.ipynb     # demo del framework de tracking sobre un video real
+data/processed/                      # manifest_keypoints.csv, crops_kpts/ y artefactos del notebook principal
 run_inference_video.py               # framework de ejecución: video -> YOLO-pose + tracking (ByteTrack) -> ID de jugador + 5 keypoints por frame -> video anotado
 report/                              # reporte técnico en PDF (máx. 5 páginas) — pendiente de actualizar al nuevo pipeline
 ```
 
 ## Alcance de cada componente
 
-- **`notebooks/01_pipeline_cnn_impacto.ipynb`**: es el entregable evaluado por la rúbrica de la
-  Actividad 1 (preparación de datos, CNN, evaluación, interpretación visual, comunicación técnica).
-- **`notebooks/02_yolo_pose_deteccion.ipynb`**, **`notebooks/03_demo_inferencia_video.ipynb`** y
+- **`notebooks/actividad_3_clasificacion_visual_cnn.ipynb`**: es el entregable evaluado por la rúbrica de la
+  Actividad 3 (preparación de datos, CNN, evaluación, interpretación visual, comunicación técnica).
+- **`notebooks/actividad_3b_yolo_pose_deteccion.ipynb`**, **`notebooks/actividad_3c_demo_inferencia_video.ipynb`** y
   **`run_inference_video.py`**: trabajo adicional que sienta las bases del modelo final del proyecto
   (detección y tracking de los 5 keypoints por jugador en video real, frame por frame). No forma parte
-  de las métricas exigidas por la Actividad 1.
+  de las métricas exigidas por la Actividad 3.
 
 ## Entorno (uv) y GPU
 
@@ -123,12 +123,12 @@ uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available
 Los notebooks corren dentro del entorno de uv:
 
 ```bash
-uv run jupyter notebook notebooks/01_pipeline_cnn_impacto.ipynb
+uv run jupyter notebook notebooks/actividad_3_clasificacion_visual_cnn.ipynb
 ```
 
 También se registró un kernel de Jupyter (`padel-gpu`) apuntando a `.venv`, por si abres los notebooks
 desde otra instalación de Jupyter/VS Code y quieres seleccionar ese entorno manualmente.
 
-`notebooks/01_pipeline_cnn_impacto.ipynb` detecta la GPU automáticamente
-(`device = "cuda" if torch.cuda.is_available() else "cpu"`); `notebooks/02_yolo_pose_deteccion.ipynb`
+`notebooks/actividad_3_clasificacion_visual_cnn.ipynb` detecta la GPU automáticamente
+(`device = "cuda" if torch.cuda.is_available() else "cpu"`); `notebooks/actividad_3b_yolo_pose_deteccion.ipynb`
 (ultralytics) también usa GPU automáticamente cuando está disponible.

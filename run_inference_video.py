@@ -1,6 +1,6 @@
 """Framework de ejecucion: procesa un video de padel frame por frame con el detector YOLO-pose
-entrenado en notebooks/02_yolo_pose_deteccion.ipynb, trackeando a cada jugador con una identidad
-persistente (ByteTrack, via ultralytics model.track()) y dibujando sus 5 keypoints
+entrenado en notebooks/actividad_3b_yolo_pose_deteccion.ipynb, trackeando a cada jugador con una
+identidad persistente (ByteTrack, via ultralytics model.track()) y dibujando sus 5 keypoints
 (cabeza-hombro-codo-muneca-raqueta) cuadro a cuadro.
 
 A diferencia de correr el detector de forma independiente por frame (model.predict()), el tracking
@@ -11,7 +11,7 @@ Uso:
     python run_inference_video.py --video ruta/al/video.mp4 --output salida.mp4
 
 Por defecto busca los pesos entrenados en data/processed/pose_model_artifact.json (generado por
-notebooks/02_yolo_pose_deteccion.ipynb).
+notebooks/actividad_3b_yolo_pose_deteccion.ipynb).
 """
 import argparse
 from pathlib import Path
@@ -20,8 +20,10 @@ import json
 import cv2
 
 ROOT = Path(__file__).resolve().parent
-KPT_NAMES = ["cabeza", "hombro", "codo", "muneca", "raqueta"]
-SKELETON = [(0, 1), (1, 2), (2, 3), (3, 4)]  # cabeza-hombro-codo-muneca-raqueta
+# Orden real de los 5 keypoints en el modelo (verificado visualmente en notebooks/01_pipeline_cnn_impacto.ipynb,
+# Checkpoint 0.6): NO es cabeza-hombro-codo-muneca-raqueta secuencial, esta desplazado en uno.
+KPT_NAMES = ["hombro", "codo", "muneca", "raqueta", "cabeza"]
+SKELETON = [(4, 0), (0, 1), (1, 2), (2, 3)]  # cabeza(4)-hombro(0)-codo(1)-muneca(2)-raqueta(3)
 
 # un color estable por ID de track (se repite ciclicamente si hay mas de 8 jugadores simultaneos)
 TRACK_COLORS = [
