@@ -1,0 +1,11 @@
+{
+  "weights_path": "C:\\Users\\luisj\\OneDrive\\Documentos\\Maestria Inteligencia Artificial\\Tercer Semestre\\Primer Ciclo\\Tecnicas_Avanzadas_Modelado_En_IA\\Unidad_2\\padel-impact-position-detection\\runs\\pose\\padel_yolo_pose\\weights\\best.pt",
+  "imgsz": 384,
+  "kpt_names": [
+    "cabeza",
+    "hombro",
+    "codo",
+    "muneca",
+    "raqueta"
+  ]
+}

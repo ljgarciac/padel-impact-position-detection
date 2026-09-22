@@ -1,0 +1,7 @@
+{
+  "q1": -0.6678155905308986,
+  "q2": -0.5955956217269511,
+  "q3": -0.4218056399592598,
+  "seed": 42,
+  "formula": "extension = (racket_y - wrist_y) / h; clases por cuartil de train"
+}

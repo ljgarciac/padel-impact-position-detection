@@ -1,0 +1,23 @@
+flip_idx:
+- 0
+- 1
+- 2
+- 3
+- 4
+kpt_shape:
+- 5
+- 3
+names:
+- Person
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: padel_an_2
+  url: https://universe.roboflow.com/padel1s-workspace/padel_an_2/dataset/6
+  version: 6
+  workspace: padel1s-workspace
+test: ../test/images
+train: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer
+  Semestre\Primer Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6/train/images
+val: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer Semestre\Primer
+  Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6/valid/images

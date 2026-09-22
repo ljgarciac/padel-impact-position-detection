@@ -1,0 +1,18 @@
+train: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer
+  Semestre\Primer Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6\train\images
+val: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer Semestre\Primer
+  Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6\valid\images
+test: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer Semestre\Primer
+  Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6\test\images
+kpt_shape:
+- 5
+- 3
+flip_idx:
+- 0
+- 1
+- 2
+- 3
+- 4
+nc: 1
+names:
+- Person

@@ -1,0 +1,38 @@
+# Imagenes: no se suben a git en ningun lado del repo (dataset, recortes, figuras, etc.).
+# El dataset (data/Padel_an_2-6/) se regenera corriendo notebooks/01_pipeline_cnn_impacto.ipynb
+# (Checkpoint 0.5, descarga automatica desde Roboflow si no hay imagenes locales).
+*.jpg
+*.jpeg
+*.png
+*.bmp
+# Videos generados (demo de inferencia)
+*.mp4
+
+# Artefactos regenerables (se reconstruyen corriendo los notebooks 1/2/3)
+data/processed/crops_kpts/
+data/processed/video_demo/
+runs/
+
+# Pesos preentrenados y artefactos de validacion que ultralytics descarga/crea
+# junto al notebook (cwd relativo) al correr notebooks/02_yolo_pose_deteccion.ipynb
+yolov8n-pose.pt
+notebooks/yolov8n-pose.pt
+notebooks/runs/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# uv-managed virtual environment (se recrea con `uv sync`)
+.venv/
+
+*.txt
+*.rf
+*.jpg
+*.cache
+*.lock
+*.csv
+*.pdf
