@@ -29,8 +29,12 @@ dependencies = [
 # cambiar la URL de abajo a "https://download.pytorch.org/whl/cpu" (o correr
 # `uv pip install torch torchvision --torch-backend=cpu`).
 [tool.uv.sources]
-torch = [{ index = "pytorch-cu132" }]
-torchvision = [{ index = "pytorch-cu132" }]
+torch = [
+    { index = "pytorch-cu132", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+    { index = "pytorch-cu132", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
 
 [[tool.uv.index]]
 name = "pytorch-cu132"

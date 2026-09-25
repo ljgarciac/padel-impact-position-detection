@@ -17,7 +17,5 @@ roboflow:
   version: 6
   workspace: padel1s-workspace
 test: ../test/images
-train: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer
-  Semestre\Primer Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6/train/images
-val: C:\Users\luisj\OneDrive\Documentos\Maestria Inteligencia Artificial\Tercer Semestre\Primer
-  Ciclo\Tecnicas_Avanzadas_Modelado_En_IA\Unidad_2\padel-impact-position-detection\data\Padel_an_2-6/valid/images
+train: /Users/psychobolt/Documents/education/universidad_de_la_sabana/maestria_en_inteligencia_artificial/asignaturas/TAIA/unidad_2/padel-impact-position-detection/data/Padel_an_2-6/train/images
+val: /Users/psychobolt/Documents/education/universidad_de_la_sabana/maestria_en_inteligencia_artificial/asignaturas/TAIA/unidad_2/padel-impact-position-detection/data/Padel_an_2-6/valid/images
