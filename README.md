@@ -3,7 +3,7 @@
 Proyecto propio para la Unidad 2 (Técnicas Avanzadas de Modelado en IA, Maestría en Inteligencia
 Artificial). El objetivo final es **trackear correctamente los 5 puntos clave de cada jugador**
 (**cabeza, hombro, codo, muñeca, raqueta**) a lo largo de un video real de pádel, con una identidad
-persistente por jugador (no solo detección independiente por frame) — comparando distintos enfoques de
+persistente por jugador (no solo detección independiente por frame) - comparando distintos enfoques de
 modelado para la regresión de esos puntos (CNN propia, transfer learning, YOLO-pose).
 
 ## Origen y etiquetado de los datos
@@ -26,7 +26,7 @@ de exportación de Roboflow (valores de keypoints desplazados entre ejes para ho
 confirmado comparando ambos exports y revisando directamente en Roboflow que la anotación manual era
 correcta); reexportando con `download("yolov5")` en vez del formato usado originalmente, el problema
 desaparece por completo (verificado: 0 valores fuera de rango en las 1150×5×2 coordenadas). Por eso ya
-no hay carpetas `train/`, `valid/`, `test/` en la raíz del repo — todo el dataset está en `data/`.
+no hay carpetas `train/`, `valid/`, `test/` en la raíz del repo - todo el dataset está en `data/`.
 
 ## De pose a clasificación (Actividad 3)
 
@@ -38,7 +38,7 @@ no hay carpetas `train/`, `valid/`, `test/` en la raíz del repo — todo el dat
    base para trackear los 5 puntos en video (`notebooks/actividad_3c_demo_inferencia_video.ipynb`).
 2. **Clasificación del tipo de keypoint** (cabeza/hombro/codo/muñeca/raqueta) a partir de un recorte
    pequeño centrado en cada punto anotado (tamaño proporcional al alto del jugador, ~5500 parches en
-   total) — esto produce la salida de clasificación con matriz de confusión y métricas por clase que
+   total) - esto produce la salida de clasificación con matriz de confusión y métricas por clase que
    exige la rúbrica de la Actividad 3, usando la clase real de la anotación directamente (sin ninguna
    regla geométrica derivada). Resultado: **81% de exactitud en test** (vs. 21% del baseline
    mayoritario), con confusiones interpretables entre keypoints vecinos (hombro↔codo, por texturas de
@@ -76,7 +76,7 @@ notebooks/
   actividad_3c_demo_inferencia_video.ipynb     # demo del framework de tracking sobre un video real
 data/processed/                      # manifest_keypoints.csv, crops_kpts/ y artefactos del notebook principal
 run_inference_video.py               # framework de ejecución: video -> YOLO-pose + tracking (ByteTrack) -> ID de jugador + 5 keypoints por frame -> video anotado
-report/                              # reporte técnico en PDF (máx. 5 páginas) — pendiente de actualizar al nuevo pipeline
+report/                              # reporte técnico en PDF (máx. 5 páginas) - pendiente de actualizar al nuevo pipeline
 ```
 
 ## Alcance de cada componente
