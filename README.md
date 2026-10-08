@@ -63,6 +63,77 @@ entrenado en `notebooks/actividad_3b_yolo_pose_deteccion.ipynb` con **tracking d
 jugador mantiene un ID estable mientras el tracker lo siga, con sus 5 keypoints dibujados cuadro a
 cuadro. No forma parte de las métricas exigidas por la Actividad 3.
 
+## Pipeline en tiempo real (Actividad 4, Unidad 3)
+
+`notebooks/actividad_4_unidad_3_pipeline_tiempo_real.ipynb` compara una versión síncrona contra una
+concurrente (hilos + colas) del detector, usando `realtime_pipeline.py`:
+
+```bash
+uv run python realtime_pipeline.py --mode compare --loops 15          # benchmark por CLI
+uv run python realtime_pipeline.py --mode threaded --detector mediapipe
+```
+
+### App web en vivo: nuestro modelo vs. MediaPipe Pose
+
+```bash
+uv run python -m webapp            # abre http://127.0.0.1:8000
+```
+
+Una página con **dos pantallas sobre los mismos frames**:
+
+- a la izquierda, nuestro YOLOv8n-pose de 5 keypoints con ByteTrack;
+- a la derecha, MediaPipe Pose (33 landmarks, 4 personas), con sus puntos equivalentes resaltados.
+
+Bajo cada pantalla se muestran en vivo las métricas de la Actividad 4:
+
+- FPS de pipeline y de inferencia.
+- Latencia de inferencia y de extremo a extremo (p50/p95), jitter y espera en colas.
+- Frames procesados y descartados.
+- **CPU, RAM, hilos y VRAM de ese proceso**.
+- Personas por frame y confianza de los keypoints.
+
+Hay tres fuentes posibles:
+
+- **el video demo**, entregado a ritmo de reloj como si fuera una cámara;
+- **la webcam del PC**;
+- **un iPhone por QR**. Al terminar, cada modelo deja `report/live_runs/<sesión>/<modelo>/{anotado.mp4,
+resultados.csv, summary.json}`, y la sesión deja además `recursos.csv` (CPU/RAM/GPU en el tiempo).
+
+**iPhone como cámara.** Elige *iPhone por QR* en la fuente (o abre `http://127.0.0.1:8000/#iphone`) y sigue los pasos:
+
+1. Escanea el QR con el iPhone, conectado al mismo Wi-Fi que el PC.
+2. Abre el enlace en Safari y acepta el aviso del certificado.
+3. Pulsa *Empezar* en el iPhone y, cuando el PC diga *Transmitiendo*, pulsa *Ejecutar*.
+
+Cómo funciona por dentro:
+
+- El iPhone es solo la cámara: transmite JPEG y **nuestro modelo de 5 keypoints** (y MediaPipe, para comparar) corren en el PC.
+- La app sigue escuchando solo en `127.0.0.1`. Para el celular se abre un relay **HTTPS** aparte en la IP de la red local (puerto 8443), porque Safari solo permite la cámara en páginas seguras. El certificado es autofirmado, lo genera la app en `.tools/phone-cert/` y no sale de la red.
+- El enlace lleva un token que se puede renovar con *Nuevo enlace*.
+- La primera vez Windows puede pedir permiso para Python en redes privadas.
+- Las redes que aíslan dispositivos (de invitados, algunas universitarias) no sirven.
+- Con el iPhone, la latencia de extremo a extremo se mide desde que el frame **llega al PC**: el reloj del teléfono no está sincronizado con el del PC.
+
+Diseño adaptado de la propuesta `live_camara_dual` de `padel-vision-analytics-light` (`web/en_vivo.py`).
+
+```
+iPhone ──wss JPEG──► relay HTTPS (webapp/phone.py) ──┐
+Webcam / video ─────────────────────────────────────┤
+Navegador ── MJPEG (video en vivo, uno por modelo) + SSE (métricas)
+   │
+Servidor FastAPI (no carga torch ni mediapipe)
+   ├─ SessionManager: una sesión a la vez, parada ordenada -> terminate -> kill
+   └─ ResourceMonitor: CPU / RAM / VRAM por PID, medido desde afuera
+   │  multiprocessing "spawn"
+   ├─ Captura (1 proceso) ─► ring de frames en SharedMemory (una sola lectura de la fuente)
+   ├─ Worker YOLO (GPU)      ─┐ cada uno corre run_sync / run_threaded de realtime_pipeline.py
+   └─ Worker MediaPipe (CPU) ─┘ y toma siempre el frame más nuevo (los saltados = descartados)
+```
+
+La arquitectura (subproceso `spawn`, progreso por SSE, parada escalonada, video H.264, interfaz Carbon)
+se portó de la app local de `padel-vision-analytics-light` (rama `feat/local-app`), en versión
+delgada. Pruebas: `uv run pytest`.
+
 ## Estructura del repo
 
 ```
@@ -76,6 +147,10 @@ notebooks/
   actividad_3c_demo_inferencia_video.ipynb     # demo del framework de tracking sobre un video real
 data/processed/                      # manifest_keypoints.csv, crops_kpts/ y artefactos del notebook principal
 run_inference_video.py               # framework de ejecución: video -> YOLO-pose + tracking (ByteTrack) -> ID de jugador + 5 keypoints por frame -> video anotado
+realtime_pipeline.py                 # Actividad 4: pipeline síncrono vs. concurrente, detector intercambiable
+mediapipe_detector.py                # MediaPipe Pose con la misma interfaz de detector (referencia)
+webapp/                              # app web en vivo de dos pantallas (python -m webapp)
+tests/                               # pruebas de la app y de los ganchos del pipeline (uv run pytest)
 report/                              # reporte técnico en PDF (máx. 5 páginas) — pendiente de actualizar al nuevo pipeline
 ```
 

@@ -36,3 +36,7 @@ __pycache__/
 *.lock
 *.csv
 *.pdf
+# App web en tiempo real (webapp/): salidas por sesion y modelo de MediaPipe descargado
+report/live_runs/
+models/*.task
+.tools/

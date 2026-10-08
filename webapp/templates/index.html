@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Padel Pose en vivo</title>
+<link rel="stylesheet" href="/static/carbon.css">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+
+<header class="masthead">
+  <h1>Padel Pose <span class="thin">en vivo</span></h1>
+  <span class="meta">5 keypoints propios vs. MediaPipe Pose, mismos frames</span>
+  <span class="spacer"></span>
+  <span id="s-state" class="tag tag--idle">Sin sesión</span>
+  <span id="s-elapsed" class="num meta"></span>
+</header>
+
+<main>
+  <section class="options" aria-labelledby="opt-h">
+    <h2 id="opt-h" class="sr-only">Opciones</h2>
+    <div class="fields">
+      <label>Fuente
+        <select id="opt-source"></select></label>
+      <label id="cam-field" hidden>Índice de cámara
+        <input id="opt-camera" type="number" min="0" max="9" value="0"></label>
+      <label>Modo
+        <select id="opt-mode">
+          <option value="threaded">Concurrente (hilos + colas)</option>
+          <option value="sync">Síncrono</option>
+        </select></label>
+      <label title="0 = repetir hasta detener">Loops
+        <input id="opt-loops" type="number" min="0" max="500" value="15"></label>
+      <label title="Ritmo al que el video se entrega como si fuera una cámara. 0 = FPS nativos del archivo.">Ritmo de la fuente (FPS)
+        <input id="opt-pace" type="number" min="0" max="240" step="1" value="30"></label>
+      <label>imgsz (YOLO)
+        <input id="opt-imgsz" type="number" min="160" max="1280" step="32" value="384"></label>
+      <label>conf (YOLO)
+        <input id="opt-conf" type="number" min="0.05" max="0.95" step="0.05" value="0.25"></label>
+      <label title="Solo cambia lo que se dibuja y la confianza que se promedia; la inferencia es la misma.">Puntos a mostrar
+        <select id="opt-kpts">
+          <option value="brazo_raqueta" selected>Brazo + raqueta</option>
+          <option value="brazo">Solo brazo (hombro, codo, muñeca)</option>
+          <option value="todos">Todos (5 propios / 33 MediaPipe)</option>
+        </select></label>
+      <label>Variante MediaPipe
+        <select id="opt-mpvar">
+          <option value="lite">lite</option>
+          <option value="full" selected>full</option>
+          <option value="heavy">heavy</option>
+        </select></label>
+    </div>
+    <div class="fields fields--checks">
+      <label class="check"><input type="checkbox" id="opt-yolo" checked> Nuestro modelo (YOLOv8n-pose, 5 keypoints)</label>
+      <label class="check"><input type="checkbox" id="opt-mp" checked> MediaPipe Pose (33 landmarks)</label>
+      <label class="check" title="Codificar JPEG cuesta CPU en un hilo aparte. Para medir limpio, apágalo."><input type="checkbox" id="opt-preview" checked> Vista en vivo</label>
+      <span class="hint">Juntos compiten por CPU. Para medir cada modelo aislado, desmarca el otro.</span>
+    </div>
+    <div id="phone-panel" class="phone-panel" hidden>
+      <figure class="phone-qr">
+        <img id="phone-qr" alt="Código QR con el enlace para la cámara del iPhone" width="184" height="184">
+        <figcaption><button id="phone-rotate" type="button" class="ghost">Nuevo enlace</button></figcaption>
+      </figure>
+      <div class="phone-info">
+        <h3>Cámara del iPhone</h3>
+        <ol class="steps">
+          <li>Conecta el iPhone al <strong>mismo Wi-Fi</strong> que esta computadora.</li>
+          <li>Escanea este QR con la cámara del iPhone y abre el enlace en Safari.</li>
+          <li>Safari avisará <em>“Esta conexión no es privada”</em>: el certificado lo creó esta app y no sale de tu red. Toca <em>Mostrar detalles → visitar este sitio web</em>.</li>
+          <li>Pulsa <strong>Empezar</strong> en el iPhone y permite la cámara. Cuando aquí diga <em>Transmitiendo</em>, pulsa <strong>Ejecutar</strong>.</li>
+        </ol>
+        <p class="meta">Enlace: <code id="phone-url">-</code></p>
+        <p class="meta">Si Windows pregunta si Python puede aceptar conexiones, permite <strong>redes privadas</strong>. Algunas redes de universidad o de invitados aíslan los dispositivos entre sí; ahí el iPhone no llegará.</p>
+        <dl class="phone-state">
+          <div><dt>Estado</dt><dd><span id="phone-tag" class="tag tag--idle">Esperando al iPhone</span></dd></div>
+          <div><dt>Recibiendo</dt><dd id="phone-fps">-</dd></div>
+          <div><dt>Resolución</dt><dd id="phone-size">-</dd></div>
+        </dl>
+        <div id="phone-error"></div>
+      </div>
+      <img id="phone-preview" class="phone-preview" alt="Vista previa de la cámara del iPhone" hidden>
+    </div>
+    <div class="actions">
+      <button id="btn-start" class="primary" type="button">Ejecutar</button>
+      <button id="btn-stop" type="button" disabled>Detener</button>
+      <span id="s-message" class="meta" aria-live="polite"></span>
+    </div>
+    <div class="track" aria-hidden="true"><div id="p-fill" class="fill"></div></div>
+    <div id="p-error"></div>
+  </section>
+
+  <section class="screens">
+    {% for key, title, sub in [("yolo", "Nuestro modelo", "YOLOv8n-pose afinado · 5 keypoints · ByteTrack"), ("mediapipe", "MediaPipe Pose", "PoseLandmarker · 33 landmarks · referencia")] %}
+    <article class="screen" id="screen-{{ key }}" data-model="{{ key }}">
+      <div class="screen-head">
+        <div>
+          <h2>{{ title }}</h2>
+          <p class="meta">{{ sub }}</p>
+        </div>
+        <span class="spacer"></span>
+        <span class="tag tag--idle" data-f="device">-</span>
+        <span class="tag tag--idle" data-f="state">Inactivo</span>
+      </div>
+      <div class="viewport">
+        <img alt="Video anotado en vivo: {{ title }}" data-f="img" hidden>
+        <div class="empty" data-f="empty">Sin video. Elige una fuente y pulsa Ejecutar.</div>
+      </div>
+      <div class="metrics">
+        <div class="group">
+        <h3>Desempeño</h3>
+        <dl>
+          <div><dt>FPS pipeline</dt><dd data-m="fps">-</dd></div>
+          <div><dt>FPS inferencia</dt><dd data-m="inference_fps">-</dd></div>
+          <div><dt>Inferencia p50 / p95</dt><dd data-m="inf">-</dd></div>
+          <div><dt>Extremo a extremo p50 / p95</dt><dd data-m="e2e">-</dd></div>
+          <div><dt>Jitter (estabilidad)</dt><dd data-m="jitter_ms">-</dd></div>
+          <div><dt>Espera en colas</dt><dd data-m="queue_ms_mean">-</dd></div>
+          <div><dt>Frames procesados / descartados</dt><dd data-m="frames">-</dd></div>
+        </dl>
+        </div>
+        <div class="group">
+        <h3>Máquina (este proceso)</h3>
+        <dl>
+          <div><dt>CPU</dt><dd data-r="cpu">-</dd></div>
+          <div><dt>RAM (RSS)</dt><dd data-r="rss">-</dd></div>
+          <div><dt>Hilos</dt><dd data-r="threads">-</dd></div>
+          <div><dt>VRAM</dt><dd data-r="vram">-</dd></div>
+        </dl>
+        <h3>Predicción</h3>
+        <dl>
+          <div><dt>Personas por frame</dt><dd data-m="detections">-</dd></div>
+          <div><dt>Confianza de keypoints</dt><dd data-m="kpt_conf">-</dd></div>
+        </dl>
+        </div>
+      </div>
+      <div class="sparks">
+        <figure class="spark" data-spark="fps"><figcaption>FPS pipeline, últimos 60 s</figcaption><canvas></canvas><output></output></figure>
+        <figure class="spark" data-spark="rss"><figcaption>RAM del proceso (MB), últimos 60 s</figcaption><canvas></canvas><output></output></figure>
+      </div>
+      <div class="screen-error" data-f="error"></div>
+    </article>
+    {% endfor %}
+  </section>
+
+  <section class="system" aria-label="Sistema completo">
+    <dl class="strip">
+      <div><dt>CPU sistema</dt><dd id="sys-cpu">-</dd></div>
+      <div><dt>RAM sistema</dt><dd id="sys-ram">-</dd></div>
+      <div><dt>GPU</dt><dd id="sys-gpu">-</dd></div>
+      <div><dt>VRAM total</dt><dd id="sys-vram">-</dd></div>
+      <div><dt>Captura</dt><dd id="sys-cap">-</dd></div>
+      <div><dt>Proceso de captura</dt><dd id="sys-capproc">-</dd></div>
+    </dl>
+  </section>
+
+  <section id="results" hidden>
+    <h2>Resultado de la sesión</h2>
+    <p class="meta">Estadísticas de <code>summarize()</code> sobre el estado estable (sin el warm-up), las mismas que usa el notebook.</p>
+    <div class="table-wrap"><table id="cmp" class="data"></table></div>
+    <div class="outputs" id="outputs"></div>
+  </section>
+
+  <section>
+    <h2>Historial</h2>
+    <div class="table-wrap"><table id="history" class="data compact"></table></div>
+  </section>
+</main>
+
+<div id="tooltip" class="tooltip" hidden></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

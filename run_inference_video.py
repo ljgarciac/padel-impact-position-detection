@@ -37,7 +37,16 @@ def load_weights_path(weights_path=None):
         return weights_path
     with open(ROOT / "data" / "processed" / "pose_model_artifact.json") as f:
         artifact = json.load(f)
-    return artifact["weights_path"]
+    stored_path = artifact["weights_path"]
+    if Path(stored_path).exists():
+        return stored_path
+    # el artefacto puede traer una ruta absoluta de otra maquina (ver notebooks de la unidad 3);
+    # en ese caso, los pesos entrenados viven en esta ubicacion relativa al repo
+    fallback = ROOT / "runs" / "pose" / "padel_yolo_pose" / "weights" / "best.pt"
+    if fallback.exists():
+        return str(fallback)
+    raise FileNotFoundError(
+        f"No se encontraron los pesos ni en '{stored_path}' ni en '{fallback}'")
 
 
 def process_video(video_path, output_path, weights_path=None, imgsz=384, conf=0.25,

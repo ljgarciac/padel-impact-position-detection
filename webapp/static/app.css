@@ -1,0 +1,171 @@
+/* Estilos de la app. Los tokens (color, espaciado, tipografia) vienen de carbon.css, copiado de
+ * live_camera (feat/local-app); aqui solo hay composicion. Reglas de alla: cero radio, cifras en
+ * mono tabular, agrupar con lineas de 1px y espacio (no tarjetas), movimiento solo con motivo. */
+
+* { box-sizing: border-box; }
+/* el atributo hidden siempre gana, aunque una regla de layout fije display */
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.43;
+}
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.num, dd, td.num, output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.meta { color: var(--text-secondary); font-size: 0.75rem; margin: 0; }
+.hint { color: var(--text-helper); font-size: 0.75rem; }
+.spacer { flex: 1; }
+h2 { font-size: 1rem; font-weight: 600; margin: 0; }
+h3 { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); margin: var(--spacing-04) 0 var(--spacing-02); }
+code { font-family: var(--font-mono); font-size: 0.75rem; }
+
+/* ---------- cabecera ---------- */
+.masthead {
+  display: flex; align-items: center; gap: var(--spacing-05);
+  height: var(--header-h); padding: 0 var(--spacing-05);
+  background: var(--layer-01); border-bottom: 1px solid var(--border-subtle-01);
+}
+.masthead h1 { font-size: 0.875rem; font-weight: 600; margin: 0; white-space: nowrap; }
+.masthead .thin { font-weight: 400; }
+
+main { padding: var(--spacing-05); display: grid; gap: var(--spacing-06); max-width: 1680px; margin: 0 auto; }
+section { border-top: 1px solid var(--border-subtle-01); padding-top: var(--spacing-04); }
+section.options { border-top: 0; padding-top: 0; }
+
+/* ---------- formulario ---------- */
+.fields { display: flex; flex-wrap: wrap; gap: var(--spacing-04) var(--spacing-05); align-items: end; }
+.fields label { display: grid; gap: var(--spacing-02); font-size: 0.75rem; color: var(--text-secondary); }
+.fields--checks { margin-top: var(--spacing-04); align-items: center; }
+.fields label.check { display: flex; align-items: center; gap: var(--spacing-03); color: var(--text-primary); font-size: 0.875rem; }
+select, input[type="number"] {
+  height: var(--size-md); min-width: 7rem; padding: 0 var(--spacing-04);
+  background: var(--field-01); color: var(--text-primary);
+  border: 0; border-bottom: 1px solid var(--border-strong-01); border-radius: 0;
+  font: inherit; font-size: 0.875rem;
+}
+input[type="number"] { font-family: var(--font-mono); width: 7rem; }
+select:disabled, input:disabled { opacity: 0.45; cursor: not-allowed; }
+input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--interactive); margin: 0; }
+select:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+.actions { display: flex; gap: 1px; align-items: center; margin-top: var(--spacing-05); }
+.actions .meta { margin-left: var(--spacing-05); }
+button {
+  height: var(--size-lg); min-width: 9rem; padding: 0 var(--spacing-09) 0 var(--spacing-05);
+  text-align: left; font: inherit; font-size: 0.875rem; cursor: pointer;
+  border: 0; border-radius: 0; color: var(--text-on-color); background: var(--button-secondary);
+  transition: background var(--dur-fast) var(--motion-standard);
+}
+button:hover:not(:disabled) { background: var(--button-secondary-hover); }
+button.primary { background: var(--button-primary); }
+button.primary:hover:not(:disabled) { background: var(--button-primary-hover); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { cursor: not-allowed; background: var(--layer-accent-01); color: var(--text-disabled); }
+
+/* barra de progreso de 4px; indeterminada cuando no hay total (camara o loops = 0) */
+.track { height: 4px; background: var(--layer-accent-01); margin-top: var(--spacing-04); overflow: hidden; }
+.fill { height: 100%; width: 0; background: var(--interactive); transition: width var(--dur-moderate) linear; }
+.fill.indeterminate { width: 30%; animation: indet 1.4s var(--motion-standard) infinite; }
+@keyframes indet { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+@media (prefers-reduced-motion: reduce) { .fill.indeterminate { animation: none; width: 100%; opacity: .4; } }
+
+/* ---------- tags de estado ---------- */
+.tag { display: inline-flex; align-items: center; height: 1.5rem; padding: 0 var(--spacing-03);
+       font-size: 0.75rem; white-space: nowrap; border-radius: var(--radius-tag); }
+.tag--idle { background: var(--tag-warm-bg); color: var(--tag-warm-text); }
+.tag--run { background: var(--tag-blue-bg); color: var(--tag-blue-text); }
+.tag--ok { background: var(--tag-green-bg); color: var(--tag-green-text); }
+.tag--err { background: var(--tag-red-bg); color: var(--tag-red-text); }
+.tag--warn { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
+
+/* ---------- dos pantallas ---------- */
+.screens { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-06); border-top: 0; padding-top: 0; }
+@media (max-width: 960px) { .screens { grid-template-columns: 1fr; } }
+.screen { min-width: 0; display: grid; gap: var(--spacing-04); align-content: start; }
+.screen-head { display: flex; align-items: center; gap: var(--spacing-03); flex-wrap: wrap; }
+.viewport {
+  position: relative; aspect-ratio: 1 / 1; background: var(--layer-01);
+  border: 1px solid var(--border-subtle-01); display: grid; place-items: center; overflow: hidden;
+}
+.viewport img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.viewport .empty { color: var(--text-helper); font-size: 0.75rem; padding: var(--spacing-05); text-align: center; }
+
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--spacing-06); }
+@media (max-width: 560px) { .metrics { grid-template-columns: 1fr; } }
+.metrics h3:first-child { margin-top: 0; }
+.metrics dl, .strip { margin: 0; }
+.metrics dl > div {
+  display: flex; justify-content: space-between; gap: var(--spacing-04);
+  padding: var(--spacing-02) 0; border-bottom: 1px solid var(--border-subtle-00);
+}
+.metrics dt, .strip dt { color: var(--text-secondary); font-size: 0.75rem; }
+.metrics dd { margin: 0; font-size: 0.8125rem; text-align: right; white-space: nowrap; }
+dd .unit { color: var(--text-helper); font-size: 0.6875rem; margin-left: 2px; }
+dd .note { color: var(--text-helper); font-size: 0.6875rem; font-family: var(--font-sans); }
+
+.sparks { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-05); }
+.spark { margin: 0; position: relative; }
+.spark figcaption { color: var(--text-secondary); font-size: 0.75rem; }
+.spark canvas { width: 100%; height: 48px; display: block; border-bottom: 1px solid var(--border-subtle-01); cursor: crosshair; }
+.spark output { position: absolute; top: 0; right: 0; font-size: 0.75rem; color: var(--text-primary); }
+
+.screen-error:empty, #p-error:empty { display: none; }
+.notification {
+  border-left: 3px solid var(--support-error); background: var(--notification-error-bg);
+  padding: var(--spacing-04) var(--spacing-05); font-size: 0.8125rem; margin-top: var(--spacing-04);
+}
+.notification strong { display: block; }
+.notification details { margin-top: var(--spacing-03); color: var(--text-secondary); }
+.notification pre { white-space: pre-wrap; font-size: 0.6875rem; max-height: 14rem; overflow: auto; }
+
+/* ---------- franja del sistema ---------- */
+.strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--spacing-04) var(--spacing-06); }
+.strip div { display: grid; gap: var(--spacing-01); }
+.strip dd { margin: 0; font-size: 0.875rem; }
+
+/* ---------- tablas ---------- */
+.table-wrap { overflow-x: auto; margin-top: var(--spacing-04); }
+table.data { border-collapse: collapse; width: 100%; font-size: 0.8125rem; }
+table.data th, table.data td { height: 2.5rem; padding: 0 var(--spacing-05); text-align: left; border-bottom: 1px solid var(--border-subtle-00); white-space: nowrap; }
+table.data th { background: var(--layer-accent-01); font-weight: 600; font-size: 0.75rem; }
+table.data td.num, table.data th.num { text-align: right; }
+table.data th.num { font-family: var(--font-sans); }
+table.data.compact th, table.data.compact td { height: 2rem; }
+table.data tbody tr:hover { background: var(--layer-hover-01); }
+table.data td.better { font-weight: 600; }
+table.data a { color: var(--link-primary); }
+
+.outputs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-06); margin-top: var(--spacing-05); }
+@media (max-width: 960px) { .outputs { grid-template-columns: 1fr; } }
+.outputs video { width: 100%; background: #000; display: block; }
+.outputs a { color: var(--link-primary); font-size: 0.8125rem; margin-right: var(--spacing-05); }
+.outputs .links { margin-top: var(--spacing-03); }
+
+.tooltip {
+  position: fixed; pointer-events: none; z-index: 10; padding: var(--spacing-02) var(--spacing-03);
+  background: var(--background-inverse); color: var(--text-inverse);
+  font-family: var(--font-mono); font-size: 0.75rem; white-space: nowrap;
+}
+
+/* ---------- panel del iPhone ---------- */
+.phone-panel {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 16rem); gap: var(--spacing-06);
+  margin-top: var(--spacing-05); padding-top: var(--spacing-05); border-top: 1px solid var(--border-subtle-01);
+  align-items: start;
+}
+@media (max-width: 960px) { .phone-panel { grid-template-columns: 1fr; } }
+.phone-qr { margin: 0; display: grid; gap: var(--spacing-03); justify-items: start; }
+.phone-qr img { width: 184px; height: 184px; background: #fff; image-rendering: pixelated; display: block; }
+.phone-qr button { min-width: 0; height: var(--size-md); padding-right: var(--spacing-05); }
+.phone-info h3 { margin-top: 0; }
+.steps { margin: 0 0 var(--spacing-04); padding-left: 1.25rem; font-size: 0.8125rem; display: grid; gap: var(--spacing-02); }
+.phone-info .meta { margin-bottom: var(--spacing-03); }
+.phone-info code { word-break: break-all; }
+.phone-state { display: flex; flex-wrap: wrap; gap: var(--spacing-04) var(--spacing-07); margin: var(--spacing-04) 0 0; }
+.phone-state dt { color: var(--text-secondary); font-size: 0.75rem; }
+.phone-state dd { margin: 0; font-size: 0.875rem; }
+.phone-preview { width: 100%; background: #000; display: block; }

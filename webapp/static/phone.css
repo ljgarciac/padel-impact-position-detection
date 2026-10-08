@@ -1,0 +1,47 @@
+/* Pagina del celular. Mismos tokens Carbon que la app del PC; disenada para una mano. */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { max-width: 100%; overflow-x: hidden; }
+body {
+  margin: 0; background: var(--background); color: var(--text-primary);
+  font-family: var(--font-sans); font-size: 1rem; line-height: 1.43;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.masthead {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-04);
+  height: var(--header-h); padding: 0 var(--spacing-05);
+  background: var(--layer-01); border-bottom: 1px solid var(--border-subtle-01);
+}
+.masthead h1 { font-size: 0.875rem; font-weight: 600; margin: 0; }
+.masthead .thin { font-weight: 400; }
+main { padding: var(--spacing-05); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--spacing-05); max-width: 40rem; margin: 0 auto; }
+main > * { min-width: 0; }
+.lead { margin: 0; font-size: 0.875rem; color: var(--text-secondary); }
+.marco { position: relative; background: #000; aspect-ratio: 16 / 9; display: grid; place-items: center; overflow: hidden; }
+.marco video { width: 100%; height: 100%; object-fit: contain; display: block; }
+.vacio { position: absolute; color: #c6c6c6; font-size: 0.875rem; padding: var(--spacing-05); text-align: center; margin: 0; }
+.botones { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1px; }
+button {
+  height: var(--size-lg); font: inherit; font-size: 1rem; border: 0; border-radius: 0; text-align: left;
+  padding: 0 var(--spacing-05); color: var(--text-on-color); background: var(--button-secondary); cursor: pointer;
+}
+button.primary { background: var(--button-primary); }
+button:active { transform: translateY(1px); }
+button:disabled { background: var(--layer-accent-01); color: var(--text-disabled); }
+.opciones { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--spacing-05); }
+.opciones label { min-width: 0; }
+.opciones label { display: grid; gap: var(--spacing-02); font-size: 0.75rem; color: var(--text-secondary); }
+select {
+  width: 100%; min-width: 0;
+  height: var(--size-lg); font: inherit; font-size: 1rem; padding: 0 var(--spacing-04);
+  background: var(--field-01); color: var(--text-primary); border: 0; border-bottom: 1px solid var(--border-strong-01); border-radius: 0;
+}
+.datos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-04); margin: 0; }
+.datos dt { font-size: 0.75rem; color: var(--text-secondary); }
+.datos dd { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.875rem; }
+.aviso { margin: 0; border-left: 3px solid var(--support-error); background: var(--notification-error-bg); padding: var(--spacing-04) var(--spacing-05); font-size: 0.875rem; }
+.nota { margin: 0; font-size: 0.75rem; color: var(--text-helper); }
+.tag { display: inline-flex; align-items: center; height: 1.5rem; padding: 0 var(--spacing-03); font-size: 0.75rem; }
+.tag--idle { background: var(--tag-warm-bg); color: var(--tag-warm-text); }
+.tag--run { background: var(--tag-green-bg); color: var(--tag-green-text); }
+.tag--err { background: var(--tag-red-bg); color: var(--tag-red-text); }

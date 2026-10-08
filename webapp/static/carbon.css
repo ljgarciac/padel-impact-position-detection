@@ -1,0 +1,352 @@
+/* Carbon Design System v11: tokens, escala tipográfica y escala de espaciado.
+ *
+ * HONESTIDAD: esto NO es @carbon/styles ni @carbon/react. El paquete oficial exige
+ * React o Sass con Node, y el MASTER PLAN (sección 10) los prohíbe explícitamente.
+ * Lo que hay aquí es una implementación fiel de los tokens y specs publicados de
+ * Carbon v11 en CSS plano. Los valores (paleta, escala de tipo, espaciado, alturas
+ * de componente) son los de Carbon; el código es propio.
+ *
+ * Temas: White (claro) y Gray 100 (oscuro), los dos de Carbon.
+ */
+
+/* ---------- IBM Plex, servida localmente -------------------------------- */
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/static/fonts/IBMPlexSans-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  src: url("/static/fonts/IBMPlexSans-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/static/fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+:root {
+  --font-sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", "Menlo", "Consolas", monospace;
+
+  /* ---------- escala de espaciado de Carbon --------------------------- */
+  --spacing-01: 0.125rem;  /*  2px */
+  --spacing-02: 0.25rem;   /*  4px */
+  --spacing-03: 0.5rem;    /*  8px */
+  --spacing-04: 0.75rem;   /* 12px */
+  --spacing-05: 1rem;      /* 16px */
+  --spacing-06: 1.5rem;    /* 24px */
+  --spacing-07: 2rem;      /* 32px */
+  --spacing-08: 2.5rem;    /* 40px */
+  --spacing-09: 3rem;      /* 48px */
+  --spacing-10: 4rem;      /* 64px */
+
+  /* ---------- alturas de componente de Carbon ------------------------- */
+  --size-sm: 2rem;      /* 32px */
+  --size-md: 2.5rem;    /* 40px */
+  --size-lg: 3rem;      /* 48px, altura por defecto de botón y campo */
+  --header-h: 3rem;     /* la barra superior de Carbon mide 48px */
+
+  /* Carbon no usa esquinas redondeadas. Esto es deliberado, no un olvido. */
+  --radius: 0;
+  /* Carbon hace el tag en pildora, pero junto a una tabla de datos densa canta
+     demasiado. Se deja recto como todo lo demas. */
+  --radius-tag: 0;
+
+  /* Carbon usa curvas de movimiento propias, no ease genéricos. */
+  --motion-standard: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --motion-entrance: cubic-bezier(0, 0, 0.38, 0.9);
+  --motion-exit:     cubic-bezier(0.2, 0, 1, 0.9);
+  --dur-fast: 70ms;
+  --dur-moderate: 110ms;
+  --dur-slow: 240ms;
+}
+
+
+/* ---------- rampas de acento -----------------------------------------------
+ * Valores oficiales de las paletas de color de Carbon. El acento se elige con
+ * `data-accent` en <html> y todos los tokens interactivos se derivan de la rampa,
+ * asi que cambiar de color no rompe ni el contraste ni la jerarquia.
+ * Blue 60 es el de Carbon por defecto.
+ * -------------------------------------------------------------------------- */
+
+:root, [data-accent="blue"] {
+  --accent-20: #d0e2ff; --accent-30: #a6c8ff; --accent-40: #78a9ff;
+  --accent-50: #4589ff; --accent-60: #0f62fe; --accent-70: #0043ce; --accent-80: #002d9c;
+  --accent-wash: #edf5ff;
+}
+[data-accent="green"] {
+  --accent-20: #a7f0ba; --accent-30: #6fdc8c; --accent-40: #42be65;
+  --accent-50: #24a148; --accent-60: #198038; --accent-70: #0e6027; --accent-80: #044317;
+  --accent-wash: #defbe6;
+}
+[data-accent="magenta"] {
+  --accent-20: #ffd6e8; --accent-30: #ffafd2; --accent-40: #ff7eb6;
+  --accent-50: #ee5396; --accent-60: #d02670; --accent-70: #9f1853; --accent-80: #740937;
+  --accent-wash: #fff0f7;
+}
+[data-accent="orange"] {
+  --accent-20: #ffd9be; --accent-30: #ffb784; --accent-40: #ff832b;
+  --accent-50: #eb6200; --accent-60: #ba4e00; --accent-70: #8a3800; --accent-80: #5e2900;
+  --accent-wash: #fff2e8;
+}
+[data-accent="yellow"] {
+  --accent-20: #fdd13a; --accent-30: #f1c21b; --accent-40: #d2a106;
+  --accent-50: #b28600; --accent-60: #8e6a00; --accent-70: #684e00; --accent-80: #483700;
+  --accent-wash: #fcf4d6;
+}
+[data-accent="red"] {
+  --accent-20: #ffd7d9; --accent-30: #ffb3b8; --accent-40: #ff8389;
+  --accent-50: #fa4d56; --accent-60: #da1e28; --accent-70: #a2191f; --accent-80: #750e13;
+  --accent-wash: #fff1f1;
+}
+[data-accent="purple"] {
+  --accent-20: #e8daff; --accent-30: #d4bbff; --accent-40: #be95ff;
+  --accent-50: #a56eff; --accent-60: #8a3ffc; --accent-70: #6929c4; --accent-80: #491d8b;
+  --accent-wash: #f6f2ff;
+}
+[data-accent="teal"] {
+  --accent-20: #9ef0f0; --accent-30: #3ddbd9; --accent-40: #08bdba;
+  --accent-50: #009d9a; --accent-60: #007d79; --accent-70: #005d5d; --accent-80: #004144;
+  --accent-wash: #d9fbfb;
+}
+/* Neutro: para quien prefiera la interfaz sin color. Usa la rampa de grises de
+ * Carbon, asi que en tema claro el acento es casi negro y en oscuro casi blanco. */
+[data-accent="neutral"] {
+  --accent-20: #e0e0e0; --accent-30: #c6c6c6; --accent-40: #a8a8a8;
+  --accent-50: #8d8d8d; --accent-60: #393939; --accent-70: #262626; --accent-80: #161616;
+  --accent-wash: #f4f4f4;
+}
+[data-theme="g100"][data-accent="neutral"],
+[data-accent="neutral"] {
+  --accent-neutral: 1;
+}
+
+/* ---------- tema White ---------------------------------------------------- */
+/* Se aplica por defecto y cuando el usuario fuerza claro. Carbon no mezcla temas:
+ * la pagina entera es White o Gray 100, nunca una parte de cada. */
+
+:root, [data-theme="white"] {
+  --background:            #ffffff;
+  --background-hover:      #e8e8e8;
+  --background-active:     #c6c6c6;
+  --background-selected:   #e0e0e0;
+  --background-inverse:    #393939;
+
+  --layer-01:              #f4f4f4;
+  --layer-02:              #ffffff;
+  --layer-hover-01:        #e8e8e8;
+  --layer-selected-01:     #e0e0e0;
+  --layer-accent-01:       #e0e0e0;
+
+  --field-01:              #f4f4f4;
+  --field-02:              #ffffff;
+
+  --border-subtle-00:      #e0e0e0;
+  --border-subtle-01:      #c6c6c6;
+  --border-strong-01:      #8d8d8d;
+  --border-inverse:        #161616;
+  --border-interactive:    var(--accent-60);
+
+  --text-primary:          #161616;
+  --text-secondary:        #525252;
+  --text-placeholder:      #a8a8a8;
+  --text-helper:           #6f6f6f;
+  --text-on-color:         #ffffff;
+  --text-inverse:          #ffffff;
+  --text-disabled:         #16161640;
+
+  --link-primary:          var(--accent-60);
+  --link-primary-hover:    var(--accent-70);
+
+  --interactive:           var(--accent-60);
+  --focus:                 var(--accent-60);
+  --focus-inset:           #ffffff;
+
+  --button-primary:        var(--accent-60);
+  --button-primary-hover:  var(--accent-70);
+  --button-primary-active: var(--accent-80);
+  --button-secondary:        #393939;
+  --button-secondary-hover:  #474747;
+  --button-tertiary:       var(--accent-60);
+  --button-danger:         #da1e28;
+  --button-danger-hover:   #b81921;
+
+  --support-error:         #da1e28;
+  --support-success:       #24a148;
+  --support-warning:       #f1c21b;
+  --support-info:          var(--accent-70);
+  --support-error-inverse: #fa4d56;
+
+  --notification-error-bg:   #fff1f1;
+  --notification-success-bg: #defbe6;
+  --notification-warning-bg: #fdf6dd;
+  --notification-info-bg:    var(--accent-wash);
+
+  --tag-blue-bg:   var(--accent-20); --tag-blue-text:   var(--accent-70);
+  --tag-green-bg:  #a7f0ba; --tag-green-text:  #0e6027;
+  --tag-red-bg:    #ffd7d9; --tag-red-text:    #a2191f;
+  --tag-warm-bg:   #f7f3f2; --tag-warm-text:   #6f6f6f;
+  --tag-yellow-bg: #fdf6dd; --tag-yellow-text: #684e00;
+
+  --overlay: rgba(22, 22, 22, 0.5);
+  --skeleton: #e8e8e8;
+}
+
+/* ---------- tema Gray 100 ------------------------------------------------- */
+
+/* Gray 100. Se aplica si el sistema pide oscuro Y el usuario no ha forzado claro,
+ * o si el usuario fuerza oscuro explicitamente. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="white"]) {
+    --background:            #161616;
+    --background-hover:      #353535;
+    --background-active:     #525252;
+    --background-selected:   #353535;
+    --background-inverse:    #f4f4f4;
+
+    --layer-01:              #262626;
+    --layer-02:              #393939;
+    --layer-hover-01:        #333333;
+    --layer-selected-01:     #393939;
+    --layer-accent-01:       #393939;
+
+    --field-01:              #262626;
+    --field-02:              #393939;
+
+    --border-subtle-00:      #393939;
+    --border-subtle-01:      #393939;
+    --border-strong-01:      #6f6f6f;
+    --border-inverse:        #f4f4f4;
+    --border-interactive:    var(--accent-40);
+
+    --text-primary:          #f4f4f4;
+    --text-secondary:        #c6c6c6;
+    --text-placeholder:      #6f6f6f;
+    --text-helper:           #a8a8a8;
+    --text-on-color:         #ffffff;
+    --text-inverse:          #161616;
+    --text-disabled:         #f4f4f440;
+
+    --link-primary:          var(--accent-40);
+    --link-primary-hover:    var(--accent-30);
+
+    --interactive:           var(--accent-40);
+    --focus:                 #ffffff;
+    --focus-inset:           #161616;
+
+    --button-primary:        var(--accent-60);
+    --button-primary-hover:  var(--accent-70);
+    --button-primary-active: var(--accent-80);
+    --button-secondary:        #6f6f6f;
+    --button-secondary-hover:  #606060;
+    --button-tertiary:       #ffffff;
+    --button-danger:         #da1e28;
+    --button-danger-hover:   #b81921;
+
+    --support-error:         #fa4d56;
+    --support-success:       #42be65;
+    --support-warning:       #f1c21b;
+    --support-info:          var(--accent-40);
+    --support-error-inverse: #da1e28;
+
+    --notification-error-bg:   #262626;
+    --notification-success-bg: #262626;
+    --notification-warning-bg: #262626;
+    --notification-info-bg:    #262626;
+
+    --tag-blue-bg:   var(--accent-70); --tag-blue-text:   var(--accent-20);
+    --tag-green-bg:  #0e6027; --tag-green-text:  #a7f0ba;
+    --tag-red-bg:    #a2191f; --tag-red-text:    #ffd7d9;
+    --tag-warm-bg:   #393939; --tag-warm-text:   #c6c6c6;
+    --tag-yellow-bg: #684e00; --tag-yellow-text: #fdf6dd;
+
+    --overlay: rgba(0, 0, 0, 0.65);
+    --skeleton: #333333;
+  }
+}
+
+[data-theme="g100"] {
+  --button-primary:        var(--accent-60);
+  --button-primary-hover:  var(--accent-70);
+  --button-primary-active: var(--accent-80);
+  --button-danger:         #da1e28;
+  --button-danger-hover:   #b81921;
+  --support-error-inverse: #da1e28;
+  --radius-tag:            0;
+  --background:            #161616;
+  --background-hover:      #353535;
+  --background-active:     #525252;
+  --background-selected:   #353535;
+  --background-inverse:    #f4f4f4;
+
+  --layer-01:              #262626;
+  --layer-02:              #393939;
+  --layer-hover-01:        #333333;
+  --layer-selected-01:     #393939;
+  --layer-accent-01:       #393939;
+
+  --field-01:              #262626;
+  --field-02:              #393939;
+
+  --border-subtle-00:      #393939;
+  --border-subtle-01:      #393939;
+  --border-strong-01:      #6f6f6f;
+  --border-inverse:        #f4f4f4;
+  --border-interactive:    var(--accent-40);
+
+  --text-primary:          #f4f4f4;
+  --text-secondary:        #c6c6c6;
+  --text-placeholder:      #6f6f6f;
+  --text-helper:           #a8a8a8;
+  --text-on-color:         #ffffff;
+  --text-inverse:          #161616;
+  --text-disabled:         #f4f4f440;
+
+  --link-primary:          var(--accent-40);
+  --link-primary-hover:    var(--accent-30);
+
+  --interactive:           var(--accent-40);
+  --focus:                 #ffffff;
+  --focus-inset:           #161616;
+
+  --button-secondary:        #6f6f6f;
+  --button-secondary-hover:  #606060;
+  --button-tertiary:       #ffffff;
+
+  --support-error:         #fa4d56;
+  --support-success:       #42be65;
+  --support-warning:       #f1c21b;
+  --support-info:          var(--accent-40);
+
+  --notification-error-bg:   #262626;
+  --notification-success-bg: #262626;
+  --notification-warning-bg: #262626;
+  --notification-info-bg:    #262626;
+
+  --tag-blue-bg:   var(--accent-70); --tag-blue-text:   var(--accent-20);
+  --tag-green-bg:  #0e6027; --tag-green-text:  #a7f0ba;
+  --tag-red-bg:    #a2191f; --tag-red-text:    #ffd7d9;
+  --tag-warm-bg:   #393939; --tag-warm-text:   #c6c6c6;
+  --tag-yellow-bg: #684e00; --tag-yellow-text: #fdf6dd;
+
+  --overlay: rgba(0, 0, 0, 0.65);
+  --skeleton: #333333;
+}
+
+/* ---------- escala tipográfica de Carbon --------------------------------- */
+/* Nombres y valores oficiales. Cada estilo fija tamaño, peso, interlineado y
+ * letter-spacing juntos: en Carbon no se eligen por separado. */
+
+.type-caption-01   { font-size: 0.75rem;  line-height: 1.33333; font-weight: 400; letter-spacing: 0.32px; }
+.type-label-01     { font-size: 0.75rem;  line-height: 1.33333; font-weight: 400; letter-spacing: 0.32px; }
+.type-helper-text-01 { font-size: 0.75rem; line-height: 1.33333; font-weight: 400; letter-spacing: 0.32px; }
+.type-body-01      { font-size: 0.875rem; line-height: 1.42857; font-weight: 400; letter-spacing: 0.16px; }
+.type-body-02      { font-size: 1rem;     line-height: 1.5;     font-weight: 400; letter-spacing: 0; }
+.type-heading-01   { font-size: 0.875rem; line-height: 1.42857; font-weight: 600; letter-spacing: 0.16px; }
+.type-heading-02   { font-size: 1rem;     line-height: 1.5;     font-weight: 600; letter-spacing: 0; }
+.type-heading-03   { font-size: 1.25rem;  line-height: 1.4;     font-weight: 400; letter-spacing: 0; }
+.type-heading-04   { font-size: 1.75rem;  line-height: 1.28572; font-weight: 400; letter-spacing: 0; }
+.type-heading-05   { font-size: 2rem;     line-height: 1.25;    font-weight: 400; letter-spacing: 0; }

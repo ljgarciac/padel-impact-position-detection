@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#161616">
+<title>Transmitir cámara</title>
+<link rel="stylesheet" href="/static/carbon.css">
+<link rel="stylesheet" href="/static/phone.css">
+</head>
+<body data-token="{{ token }}">
+
+<header class="masthead">
+  <h1>Padel Pose <span class="thin">cámara</span></h1>
+  <span id="estado-tag" class="tag tag--idle">Sin transmitir</span>
+</header>
+
+<main>
+  <p class="lead">Esta cámara alimenta las dos pantallas de la computadora: <strong>nuestro modelo de 5 puntos</strong> y MediaPipe. Los modelos corren en la computadora; aquí solo se transmite.</p>
+
+  <div class="marco">
+    <video id="previa" autoplay playsinline muted></video>
+    <p id="vacio" class="vacio">Pulsa Empezar y permite el acceso a la cámara.</p>
+  </div>
+
+  <div class="botones">
+    <button id="empezar" class="primary" type="button">Empezar</button>
+    <button id="detener" type="button" hidden>Detener</button>
+  </div>
+
+  <fieldset class="opciones">
+    <label>Cámara
+      <select id="lado">
+        <option value="environment" selected>Trasera</option>
+        <option value="user">Frontal</option>
+      </select></label>
+    <label>Calidad
+      <select id="calidad">
+        <option value="640">640 px (más fluido)</option>
+        <option value="960" selected>960 px</option>
+        <option value="1280">1280 px (más detalle)</option>
+      </select></label>
+  </fieldset>
+
+  <dl class="datos">
+    <div><dt>Enviando</dt><dd id="fps">-</dd></div>
+    <div><dt>Resolución</dt><dd id="res">-</dd></div>
+    <div><dt>Conexión</dt><dd id="via">-</dd></div>
+  </dl>
+
+  <p id="aviso" class="aviso" role="alert" hidden></p>
+  <p class="nota">Deja esta pantalla abierta y encendida: si se bloquea el iPhone o cambias de app, Safari pausa la cámara.</p>
+</main>
+
+<script src="/static/phone.js"></script>
+</body>
+</html>
