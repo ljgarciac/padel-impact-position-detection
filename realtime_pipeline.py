@@ -43,10 +43,7 @@ from run_inference_video import KPT_NAMES, SKELETON, TRACK_COLORS, load_weights_
 ROOT = Path(__file__).resolve().parent
 WARMUP_LOOPS = 1  # se descarta el primer loop completo de cada corrida de las estadisticas
 
-
-# ---------------------------------------------------------------------------
 # Fuente de frames: video local (con loop) o camara en vivo, mismo objeto
-# ---------------------------------------------------------------------------
 class FrameSource:
     def __init__(self, video_path=None, camera_index=None, loops=1, sim_capture_delay_s=0.0,
                  display=False):
@@ -93,10 +90,7 @@ class FrameSource:
     def release(self):
         self.cap.release()
 
-
-# ---------------------------------------------------------------------------
 # Muestreo de CPU/GPU en segundo plano (no bloquea el pipeline principal)
-# ---------------------------------------------------------------------------
 class ResourceSampler:
     def __init__(self, interval=0.1):
         self.interval = interval
@@ -135,10 +129,7 @@ class ResourceSampler:
         if self._thread is not None:
             self._thread.join(timeout=2)
 
-
-# ---------------------------------------------------------------------------
 # Modelo y dibujo (reutiliza KPT_NAMES/SKELETON/TRACK_COLORS de run_inference_video.py)
-# ---------------------------------------------------------------------------
 def load_model(weights_path=None):
     from ultralytics import YOLO
     return YOLO(str(load_weights_path(weights_path)))
@@ -333,9 +324,7 @@ def run_sync(model, source: FrameSource, imgsz=384, conf=0.25, tracker="bytetrac
     return records, t_total
 
 
-# ---------------------------------------------------------------------------
 # Modo concurrente: captura || inferencia || render, con 2 queues acotadas
-# ---------------------------------------------------------------------------
 class PipelineError(Exception):
     pass
 
@@ -454,10 +443,7 @@ def run_threaded(model, source: FrameSource, imgsz=384, conf=0.25, tracker="byte
     records.sort(key=lambda r: r.frame_idx)
     return records, t_total
 
-
-# ---------------------------------------------------------------------------
 # Resumen de metricas a partir de los records de una corrida
-# ---------------------------------------------------------------------------
 def summarize(records, t_total, warmup_frames):
     if not records:
         return {}
@@ -534,24 +520,26 @@ def run_pipeline(mode, video=None, camera_index=None, loops=15, display=False, o
                   imgsz=384, conf=0.25, sim_capture_delay_s=0.0, playback_fps=None,
                   detector_name="yolo", source=None, cancel_token=None, on_frame=None,
                   writer_factory=None, sampler=None, warmup_frames=None, detector=None):
-    """Corre una version (mode='sync'|'threaded') de punta a punta y devuelve
-    (records, t_total, resource_samples, warmup_frames, summary). Reutilizable desde el CLI
-    (`main()`) y desde el notebook de la actividad, sin pasar por subprocess ni re-parsear CSV.
+    """Ejecuta el pipeline completo en modo 'sync' o 'threaded' y devuelve
+    (records, t_total, resource_samples, warmup_frames, summary).
 
-    Carga un modelo fresco por corrida: evita que el historial de ByteTrack (persist=True) de una
-    corrida contamine el arranque de la siguiente (comparacion sync vs. threaded independiente).
+    Se puede usar desde la línea de comandos (`main()`) o desde el notebook, sin pasar por
+    subprocess ni leer CSV.
 
-    playback_fps solo tiene sentido con display=True (demo visual); no se usa en benchmarking.
+    Carga un modelo nuevo en cada corrida, para que el historial de ByteTrack (persist=True)
+    no afecte la siguiente y la comparación sync vs. threaded sea justa.
 
-    Ganchos opcionales (los usa la app web; con sus valores por defecto nada cambia):
-      detector_name   "yolo" (nuestro modelo de 5 keypoints) o "mediapipe" (referencia, 33 landmarks)
-      source          fuente ya construida (p.ej. la compartida entre procesos); no se libera aqui
-      cancel_token    objeto con .is_set(); corta la corrida de forma ordenada (como la tecla 'q')
-      on_frame        callback(frame_anotado, FrameRecord), llamado fuera de la latencia medida
-      writer_factory  callback(source) -> objeto con write()/release() (p.ej. escritor H.264)
-      sampler         ResourceSampler externo, para leer sus muestras mientras corre
-      warmup_frames   frames a descartar de las estadisticas (por defecto, WARMUP_LOOPS loops)
-      detector        detector ya construido (tiene prioridad sobre detector_name); se cierra al final
+    `playback_fps` solo aplica con display=True (demo visual), no en benchmarking.
+
+    Parámetros opcionales (los usa la app web; por defecto no cambian nada):
+      detector_name   "yolo" (modelo propio de 5 keypoints) o "mediapipe" (referencia, 33 landmarks).
+      source          Fuente de video ya creada (por ejemplo, compartida entre procesos); no se cierra aquí.
+      cancel_token    Objeto con .is_set() para detener la corrida de forma ordenada (como la tecla 'q').
+      on_frame        Callback(frame_anotado, FrameRecord), ejecutado fuera de la latencia medida.
+      writer_factory  Callback(source) que devuelve un escritor con write()/release() (p. ej. H.264).
+      sampler         ResourceSampler externo, para leer sus muestras durante la corrida.
+      warmup_frames   Frames iniciales que se descartan de las estadísticas (por defecto, WARMUP_LOOPS loops).
+      detector        Detector ya construido; tiene prioridad sobre detector_name y se cierra al terminar.
     """
     detector = detector or make_detector(detector_name, imgsz=imgsz, conf=conf)
     own_source = source is None

@@ -1,10 +1,15 @@
 # Padel Impact Position Detection
 
-Proyecto propio para las Unidades 2 y 3 de *Técnicas Avanzadas de Modelado en IA* (Maestría en
-Inteligencia Artificial). El objetivo es **seguir los 5 puntos clave de cada jugador**
-(**hombro, codo, muñeca, raqueta y cabeza**) a lo largo de un video real de pádel, manteniendo la
-identidad de cada jugador entre frames, y comparar distintos enfoques de modelado: CNN propia,
-*transfer learning* y YOLO-pose.
+Proyecto propio - *Técnicas Avanzadas de Modelado en IA* (Maestría en Inteligencia Artificial). 
+
+El objetivo es **seguir los 5 puntos clave de cada jugador** (**hombro, codo, muñeca, raqueta y cabeza**) a lo largo de un video real de pádel, manteniendo la identidad de cada jugador entre frames, y comparar distintos enfoques de modelado: CNN propia, *transfer learning* y YOLO-pose.
+
+
+## Estudiantes
+- Luis Jorge García
+- Luis Eduardo Uribe
+- Felipe Barreto Patiño
+
 
 **Contenido**
 
@@ -23,10 +28,10 @@ El proyecto usa [uv](https://docs.astral.sh/uv/) para fijar la versión de Pytho
 `.python-version`) y las dependencias (`pyproject.toml`). Pasos en Windows (PowerShell):
 
 ```powershell
-# 1. Instalar uv (deja uv.exe en C:\Users\<tu_usuario>\.local\bin y lo agrega al PATH)
+# 1. Instalar uv (uv.exe en C:\Users\<user>\.local\bin)
 irm https://astral.sh/uv/install.ps1 | iex
 
-# 2. IMPORTANTE: cerrar y volver a abrir la terminal, para que tome el PATH nuevo.
+# 2. Cerrar y volver a abrir la terminal, para que tome el PATH nuevo.
 
 # 3. Clonar el repo y entrar a la carpeta
 git clone https://github.com/ljgarciac/padel-impact-position-detection.git
@@ -36,26 +41,22 @@ cd padel-impact-position-detection
 uv sync
 ```
 
-En macOS o Linux el instalador de uv es `curl -LsSf https://astral.sh/uv/install.sh | sh`, y el resto
-de los pasos es igual.
+En macOS o Linux el instalador de uv es `curl -LsSf https://astral.sh/uv/install.sh | sh`, y el resto de los pasos es igual.
 
-> Si `uv` no se reconoce, incluso en una terminal nueva, revisa que `C:\Users\<tu_usuario>\.local\bin`
+> Si `uv` no se reconoce, incluso en una terminal nueva, revisar que `C:\Users\<user>\.local\bin`
 > esté en el PATH de usuario, o usa la ruta completa: `& "$env:USERPROFILE\.local\bin\uv.exe" sync`.
 
 ### GPU (CUDA) o CPU
 
-`torch` y `torchvision` se instalan desde el índice CUDA de PyTorch
-(`https://download.pytorch.org/whl/cu132`), elegido para la GPU del equipo de desarrollo (NVIDIA RTX
-4070 Laptop, driver con CUDA 13.4). Para verificarlo:
+`torch` y `torchvision` se instalan desde el índice CUDA de PyTorch (`https://download.pytorch.org/whl/cu132`), elegido para la GPU del equipo de desarrollo (NVIDIA RTX 4070 Laptop, driver con CUDA 13.4). Para verificarlo:
 
 ```powershell
 uv run python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 ```
 
-- **Con otra GPU NVIDIA:** si `cuda.is_available()` da `False`, prueba con un índice más antiguo
-  (`cu128`, `cu126`) en la sección `[[tool.uv.index]]` de `pyproject.toml`, según lo que soporte tu
+- **Con otra GPU NVIDIA:** si `cuda.is_available()` da `False`, prueba con un índice más antiguo (`cu128`, `cu126`) en la sección `[[tool.uv.index]]` de `pyproject.toml`, según lo que soporte el
   driver (lo muestra `nvidia-smi`).
-- **Sin GPU NVIDIA:** cambia esa URL a `https://download.pytorch.org/whl/cpu` antes de `uv sync`.
+- **Sin GPU NVIDIA:** cambiar `https://download.pytorch.org/whl/cpu` antes de `uv sync`.
   Todo funciona en CPU, pero el entrenamiento y la app van varias veces más lentos.
 
 ### Comprobaciones rápidas
@@ -101,8 +102,7 @@ La ruta de los pesos se resuelve en `run_inference_video.load_weights_path()`. P
 
 ## 3. Ejecutar la app web en vivo
 
-La app compara en vivo **nuestro modelo de 5 keypoints** con **MediaPipe Pose** sobre los mismos
-frames, en dos pantallas lado a lado. Corresponde al despliegue de la Actividad 4 de la Unidad 3.
+Se realizó una app que compara en vivo **nuestro modelo de 5 keypoints** con **MediaPipe Pose** sobre los mismos frames, en dos pantallas lado a lado. Corresponde al despliegue de la Actividad 4 de la Unidad 3.
 
 ```powershell
 uv run python -m webapp
@@ -118,9 +118,7 @@ uv run python -m webapp --no-browser       # sin abrir el navegador
 ### Uso
 
 1. **Fuente**: elige una de estas tres.
-   - **Video:** cualquier `.mp4` de `data/processed/video_demo/`. Se entrega a ritmo de reloj, como si
-     fuera una cámara; *Ritmo de la fuente* fija los FPS (0 = los nativos del video) y *Loops*, cuántas
-     veces se repite (0 = hasta detener).
+   - **Video:** cualquier `.mp4` de `data/processed/video_demo/`. Se entrega a ritmo de reloj, como si fuera una cámara; *Ritmo de la fuente* fija los FPS (0 = los nativos del video) y *Loops*, cuántas veces se repite (0 = hasta detener).
    - **Webcam de este PC:** con su *índice de cámara* (normalmente 0).
    - **iPhone por QR:** ver la sección siguiente.
 2. **Modelos**: deja marcados los dos para comparar, o desmarca uno para medirlo aislado (juntos
@@ -171,7 +169,7 @@ Si algo no funciona:
 | El iPhone no abre el enlace, aunque el firewall lo permite | La red aísla a los dispositivos entre sí (redes de invitados o de algunas universidades) | Usa otra red, o comparte internet desde el iPhone al PC |
 | "Este enlace ya no sirve" | Se generó un enlace nuevo | Vuelve a escanear el QR (el botón *Nuevo enlace* invalida el anterior) |
 | La sesión se detiene sola | El iPhone bloqueó la pantalla o se cambió de app | Deja Safari al frente con la pantalla encendida |
-| La cámara no abre en Safari | Falta el permiso | *Ajustes → Safari → Cámara → Permitir* |
+| La cámara no abre en Safari | Falta el permiso | *Ajustes -> Safari -> Cámara -> Permitir* |
 
 Detalles técnicos:
 
