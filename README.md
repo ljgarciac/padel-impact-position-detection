@@ -89,7 +89,7 @@ regenerar. En un clon nuevo hay que conseguirlos antes de usar la app o los note
 | Qué | Ruta esperada | Cómo conseguirlo |
 |---|---|---|
 | Dataset (imágenes) | `data/Padel_an_2-6/{train,valid,test}/images/` | Se descarga de Roboflow: define `ROBOFLOW_API_KEY` y ejecuta el Checkpoint 0.5 de `notebooks/unidad_2/actividad_3_clasificacion_visual_cnn.ipynb` (o el Checkpoint 1 del notebook de *transfer learning*) |
-| **Pesos de nuestro modelo** (YOLOv8n-pose afinado) | `runs/pose/padel_yolo_pose/weights/best.pt` | Entrénalos con `notebooks/unidad_2/actividad_3b_yolo_pose_deteccion.ipynb`, o copia `best.pt` de un compañero a esa ruta |
+| **Pesos de nuestro modelo** (YOLOv8n-pose afinado) | `runs/pose/padel_yolo_pose/weights/best.pt` | Entrenar con `notebooks/unidad_2/actividad_3b_yolo_pose_deteccion.ipynb` |
 | Video demo | `data/processed/video_demo/Punto_1-4_mp4_demo.mp4` | Lo genera `notebooks/unidad_2/actividad_3c_demo_inferencia_video.ipynb`, o copia el archivo. Cualquier `.mp4` en esa carpeta aparece como fuente en la app |
 | Modelo de MediaPipe Pose | `models/pose_landmarker_full.task` | Se descarga solo la primera vez que se usa (unos 9 MB) |
 | Pesos YOLOv8n-pose genéricos | `yolov8n-pose.pt` | Ultralytics los descarga solo cuando hacen falta |
