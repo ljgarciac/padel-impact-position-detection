@@ -40,3 +40,6 @@ __pycache__/
 report/live_runs/
 models/*.task
 .tools/
+# Registro local de experimentos de MLflow (unidad 4): se regenera ejecutando el notebook
+mlflow.db
+mlruns/
